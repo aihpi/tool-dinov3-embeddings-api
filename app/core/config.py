@@ -36,7 +36,6 @@ class Settings:
     model_id: str
     model_revision: Optional[str]
     trust_remote_code: bool
-    model_dtype: Optional[str]
     device: str
     batch_size: int
     hf_token: Optional[str]
@@ -66,7 +65,6 @@ def load_settings() -> Settings:
         model_id=_get_env("MODEL_ID", "facebook/dinov3-vitl16-pretrain-lvd1689m"),
         model_revision=_get_env("MODEL_REVISION"),
         trust_remote_code=_get_bool("TRUST_REMOTE_CODE", False),
-        model_dtype=_get_env("MODEL_DTYPE"),
         device=_get_env("DEVICE", "cpu"),
         batch_size=_get_int("BATCH_SIZE", 1),
         hf_token=_get_env("HF_TOKEN"),

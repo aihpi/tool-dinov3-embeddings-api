@@ -19,25 +19,29 @@ def _pool_output(outputs: torch.Tensor) -> torch.Tensor:
 
 def compute_embeddings(images: List[object]) -> List[List[float]]:
     settings = load_settings()
-    model, processor, device, dtype = load_model_and_processor()
+    model, processor, device = load_model_and_processor()
     processor_kwargs = {"return_tensors": "pt"}
     if settings.image_size:
         processor_kwargs["size"] = {"shortest_edge": settings.image_size}
 
     inputs = processor(images=images, **processor_kwargs)
-    inputs = {k: v.to(device=device, dtype=dtype) for k, v in inputs.items()}
+    inputs = {k: v.to(device=device) for k, v in inputs.items()}
 
     with torch.no_grad():
         outputs = model(**inputs)
         pooled = _pool_output(outputs)
+        if not torch.isfinite(pooled).all():
+            logger.warning("non_finite_embeddings_detected")
+            pooled = torch.nan_to_num(pooled, nan=0.0, posinf=0.0, neginf=0.0)
 
     embeddings = pooled.detach().cpu().float().tolist()
     return embeddings
 
 
 def warmup() -> None:
-    model, processor, device, dtype = load_model_and_processor()
-    dummy = torch.zeros((1, 3, 224, 224), device=device, dtype=dtype)
+    model, processor, device = load_model_and_processor()
+    model_dtype = next(model.parameters()).dtype
+    dummy = torch.zeros((1, 3, 224, 224), device=device, dtype=model_dtype)
     with torch.no_grad():
         outputs = model(pixel_values=dummy)
         pooled = _pool_output(outputs)

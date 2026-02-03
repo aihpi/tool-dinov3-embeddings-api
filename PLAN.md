@@ -46,7 +46,6 @@
   - `MODEL_ID` (default model)
   - `MODEL_REVISION` (pin model revision or commit)
   - `TRUST_REMOTE_CODE` (HF models that require it)
-  - `MODEL_DTYPE` (fp16/bf16/fp32 override)
   - `DEVICE` (cpu/cuda)
   - `BATCH_SIZE` (default 1)
   - `HF_TOKEN` (optional)
@@ -57,7 +56,6 @@
 
 ## 4. Model Loading & Inference
 - Load DINOv3 with `transformers` + `torch`.
-- Pin model dtype based on device (fp16 for GPU, fp32 for CPU) unless overridden by `MODEL_DTYPE`.
 - Warmup pass on startup to validate model.
 - Implement simple request batching (single-process, queue + timeout).
 
