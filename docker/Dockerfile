@@ -15,7 +15,7 @@ RUN apt-get update \
 
 COPY pyproject.toml README.md ./
 COPY app ./app
-RUN python -m venv /opt/venv \
+RUN python -m venv /opt/venv --system-site-packages \
     && /opt/venv/bin/pip install --no-cache-dir uv \
     && /opt/venv/bin/uv pip install --no-cache-dir .
 
