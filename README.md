@@ -1,14 +1,16 @@
 <div style="background-color: #ffffff; color: #000000; padding: 10px;">
 <img src="00_aisc\img\logo_aisc_bmftr.jpg">
-<h1> Your title.
+<h1> DINOv3 Embeddings API
 </div>
 
-Your Project Description with a nice image
+Batch-first FastAPI service for generating image embeddings with DINOv3. Supports image URLs or base64 payloads, CPU/GPU execution, and Docker/Kubernetes deployment.
 
 ## Features
 
-- **Key Feature 1**: A description of the Key features
-- **Key Feature 2**: A description of the Key features
+- **Batch-first embeddings**: Always send `images: [...]`, even for single-image requests
+- **GPU-ready**: CUDA 13 base image and `DEVICE=cuda` toggle
+- **Secure URL fetch**: SSRF protections with denylist/allowlist support
+- **Ops-friendly**: Docker + K8s manifests and health checks
 
 ## Setup and Installation
 
@@ -21,46 +23,57 @@ Your Project Description with a nice image
 
 1. Clone the repository:
    ```bash
-   git clone ...
-   cd ...
+   git clone <repo-url>
+   cd tool-dinov3-embeddings-api
    ```
 
-2. Run the setup or install dependencies:
+2. Build and run with Docker:
    ```bash
-   chmod +x setup.sh
-   ./setup.sh
+   docker compose up --build
    ```
 
 3. Access the application:
-   - Frontend: ...
-   - Backend API: ...
+   - API: http://localhost:8000/v1/health
 
 ## User Guide
 
 ### Using the Tool
-1. A brief description of using the tool.
-2. Be clear and simple.
+1. Check health:
+   ```bash
+   curl http://localhost:8000/v1/health
+   ```
+2. Request embeddings (single image = batch of 1):
+   ```bash
+   curl -X POST http://localhost:8000/v1/embeddings \
+     -H "Content-Type: application/json" \
+     -d '{
+       "images": [
+         {"image_url": "https://example.com/image.jpg", "id": "img-1"}
+       ]
+     }'
+   ```
 
 ### Recommendations
-Any additional hints for using the tool.
+- For GPU, set `DEVICE=cuda` and run with the NVIDIA container runtime.
+- Use `BATCH_SIZE` to cap request size and manage latency.
 
 
 ## Limitations
 
-- **Limitation 1**: List of Limitations
-- **Limitation 2**: List of Limitations
+- **Model download time**: First start will download the model from Hugging Face.
+- **URL inputs**: Only `http`/`https` are allowed, and internal IPs are blocked by default.
 
 
 ## References
 
-- [Reference 1](https://hpi.de/kisz)
-- [Reference 2](https://hpi.de/kisz)
+- [Hugging Face Transformers](https://huggingface.co/docs/transformers)
+- [DINOv3 model card](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m)
 
 ## Author
-- [Your Name](https://hpi.de/kisz)
+- [AI Service Centre Berlin Brandenburg](https://hpi.de/kisz)
 
 ## License
-
+See [LICENSE](LICENSE).
 
 ---
 

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dinov3-embeddings
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dinov3-embeddings
+  template:
+    metadata:
+      labels:
+        app: dinov3-embeddings
+    spec:
+      containers:
+        - name: api
+          image: dinov3-embeddings:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MODEL_ID
+              value: facebook/dinov3-vitl16-pretrain-lvd1689m
+            - name: DEVICE
+              value: cpu
+            - name: BATCH_SIZE
+              value: "4"
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          livenessProbe:
+            httpGet:
+              path: /v1/health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /v1/health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      # Uncomment for GPU nodes
+      # nodeSelector:
+      #   nvidia.com/gpu.present: "true"
+      # tolerations:
+      #   - key: "nvidia.com/gpu"
+      #     operator: "Exists"
+      #     effect: "NoSchedule"
+      # volumes:
+      #   - name: hf-cache
+      #     persistentVolumeClaim:
+      #       claimName: hf-cache
+      # containers:
+      #   - name: api
+      #     volumeMounts:
+      #       - name: hf-cache
+      #         mountPath: /root/.cache/huggingface
