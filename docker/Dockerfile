@@ -4,7 +4,6 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    TRANSFORMERS_CACHE=/root/.cache/huggingface \
     HF_HOME=/root/.cache/huggingface \
     VIRTUAL_ENV=/opt/venv \
     PATH="/opt/venv/bin:$PATH"
