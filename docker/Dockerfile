@@ -5,12 +5,15 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     TRANSFORMERS_CACHE=/root/.cache/huggingface \
-    HF_HOME=/root/.cache/huggingface
+    HF_HOME=/root/.cache/huggingface \
+    VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:$PATH"
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
+COPY pyproject.toml README.md ./
 COPY app ./app
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir uv \
+    && /opt/venv/bin/uv pip install --no-cache-dir .
 
 EXPOSE 8000
 
